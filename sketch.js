@@ -15,7 +15,6 @@ function setup(){
   for(var j=0;j<5;j++){
     for (var k=0;k<3;k++){
       sb[sbCount]=new soundButton(width/3*k, (height/2)+j*(height/2)/6, width/3, (height/2)/6); //버튼 객체 만들기
-      print(sbCount);
       sbCount++;
     }
   }
@@ -26,7 +25,8 @@ function draw(){
   background(255);
   
   for (var i=0;i<sb.length;i++){
-    sb[i].show();
+    if (i==1 || i==3 || i==6 || i==8 || i==10) sb[i].show(false);
+    else sb[i].show(true);
   }
 
   for(var i=0;i<touches.length;i++){
@@ -81,11 +81,13 @@ class soundButton {
     this.h=h;
     this.x2=this.x1+width/3;
     this.y2=this.y1+(height/2)/6;
-    this.defaultColor=200;
+    this.defaultColor=color(250);
   }
   
-  show(){
-    // if(wb==0) this.defaultColor=200;
+  show(wb){
+    if(wb) this.defaultColor=color(250);
+    else this.defaultColor=color(0);
+    
     fill(this.defaultColor);
     rect(this.x1, this.y1, this.w, this.h);
     //print(this.x1, 300, 300);
