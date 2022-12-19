@@ -1,6 +1,7 @@
 //wave 3개 만들기
 
 let sb=[];
+let sbCount=0;
 
 var note=[60, 61, 62];
 var noteIndex;
@@ -13,7 +14,9 @@ function setup(){
   
   for(var j=0;j<5;j++){
     for (var k=0;k<3;k++){
-      sb=new soundButton(width/3*k, (height/2)+j*(height/2)/6); //버튼 객체 만들기     
+      sb[sbCount]=new soundButton(width/3*k, (height/2)+j*(height/2)/6, width/3, (height/2)/6); //버튼 객체 만들기
+      print(sbCount);
+      sbCount++;
     }
   }
 }
@@ -22,7 +25,7 @@ function draw(){
   colorMode(HSB);
   background(255);
   
-  for (var i=0; i<sb.length;i++){
+  for (var i=0;i<sb.length;i++){
     sb[i].show();
   }
 
@@ -71,18 +74,21 @@ document.addEventListener('gesturestart', function(e) {
 });
 
 class soundButton {
-  constructor(x, y){
+  constructor(x, y, w, h){
     this.x1=x;
     this.y1=y;
+    this.w=w;
+    this.h=h;
     this.x2=this.x1+width/3;
     this.y2=this.y1+(height/2)/6;
+    this.defaultColor=200;
   }
   
   show(){
     // if(wb==0) this.defaultColor=200;
-    fill(defaultColor);
-    rect(this.x1, this.y1, width/3, (height/2)/6);
-    print(this.x1, 300, 300);
+    fill(this.defaultColor);
+    rect(this.x1, this.y1, this.w, this.h);
+    //print(this.x1, 300, 300);
   }
   
   pressed(){
