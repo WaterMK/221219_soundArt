@@ -3,8 +3,9 @@
 let sb=[];
 let sbCount=0;
 
-var note=[60, 61, 62];
+var note=[60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72];
 var noteIndex;
+var touch1=false;
 
 var playing=false;
 function setup(){
@@ -29,31 +30,36 @@ function draw(){
     else sb[i].show(true);
   }
 
-  for(var i=0;i<touches.length;i++){
-      test(touches[i].x, touches[i].y);
+  for(var n=0;n<touches.length;n++){
+    ellipse(50, 50, 100, 100);
+    test(touches[n].x, touches[n].y);
+    print(n);
       // ellipse(touches[i].x, touches[i].y, 30, 30);
     }
 }
 
 
 function touchStarted(){
-  wave.freq(midiToFreq(note[noteIndex]))
+  // wave.freq(midiToFreq(note[noteIndex]))
   wave.start();
   wave.amp(0.5, 1);
-  
 }
 
+
 function test(x, y){
-  if(x>=width/3&& x<width/3*2 && y>=height/2, y<(height/2)+(height/2/3)) { //좌표 확인하기
+  if(x>=0&& x<width/2 && y>=height/2, y<(height/2)+(height/2/3)) { //좌표 확인하기
     fill(255, 0, 0);
-  ellipse(width/2, width/2, 50, 50);
+    rect(width/2, width/2, 50, 50);
     noteIndex=0;
+    
+    
   }
   else {
     fill(0, 255, 255);
     ellipse(width/2, width/2, 50, 50);
     noteIndex=1;
-  } 
+  }
+  wave.freq(midiToFreq(note[noteIndex]))
 }
 
 function touchEnded(){
@@ -79,8 +85,8 @@ class soundButton {
     this.y1=y;
     this.w=w;
     this.h=h;
-    this.x2=this.x1+width/3;
-    this.y2=this.y1+(height/2)/6;
+    this.x2=this.x1+this.w;
+    this.y2=this.y1+this.h;
     this.defaultColor=color(250);
   }
   
