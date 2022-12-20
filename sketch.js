@@ -11,12 +11,20 @@ var freqHz;
 var ampValue=0.5;
 
 var touch1=false;
+var touch2=false;
+var touch3=false;
 
 var playing=false;
 function setup(){
   createCanvas(displayWidth, displayHeight);
-  wave=new p5.Oscillator();
-  wave.setType('sine'); //사인파 모양
+  wave1=new p5.Oscillator();
+  wave1.setType('sine'); //사인파 모양
+  
+  wave2=new p5.Oscillator();
+  wave2.setType('sine'); //사인파 모양
+  
+  wave3=new p5.Oscillator();
+  wave3.setType('sine'); //사인파 모양
   
   for(var j=0;j<5;j++){
     for (var k=0;k<3;k++){
@@ -38,22 +46,68 @@ function draw(){
 
   for(var n=0;n<touches.length;n++){
     ellipse(50, 50, 100, 100);
-    test(touches[n].x, touches[n].y);
+    startSound(n, touches[n].x, touches[n].y);
+    endSound();
   }
 }
 
 
 function touchStarted(){
+  touch1=true;
   // wave.freq(midiToFreq(note[noteIndex]))
-  wave.start();
-  wave.amp(ampValue, 1);
+  for(var n=0;n<touches.length;n++){
+    switch(n){
+      case 0:
+        wave1.start();
+        wave1.amp(ampValue, 1);
+        break;
+      
+      case 1:
+        wave2.start();
+        wave2.amp(ampValue, 1);
+        break;
+        
+      case 2:
+        wave3.start();
+        wave3.amp(ampValue, 1);
+        break;
+    }
+  }
+}
+
+function touchEnded(){
+  touch1=false;
+  if (!touch1)
+  for(var n=0;n<touches.length;n++){
+    switch(touch){
+      case 0:
+        wave1.stop();
+        break;
+      
+      case 1:
+        wave2.stop();
+        break;
+        
+      case 2:
+        wave3.stop();
+        break;
+      
+      default:
+        wave1.stop();
+        wave2.stop();
+        wave3.stop();
+        break;
+    }
+  }
 }
 
 
-function test(x, y){
+function startSound(n, x, y){      
   for (var m=0;m<sb.length;m++){
     if(x>=sb[m].x1 && x<sb[m].x2 && y>=sb[m].y1 && y<sb[m].y2){
-      if(m<13) noteIndex=m;
+      if(m<13) {
+        noteIndex=m;
+      }
       
       else if (m==13) { //볼륨 키우기
         if(ampValue<=1){
@@ -70,13 +124,32 @@ function test(x, y){
   vb=map(rotationZ, -30, 30, -0.9, 0.9);
   freqHz=note[noteIndex]+vb;
   
-  wave.freq(midiToFreq(freqHz));
+  switch(n){
+    case 0:
+      touch1=true;
+      wave1.freq(midiToFreq(freqHz));
+      break;
+    
+    case 1:
+      touch2=true;
+      wave2.freq(midiToFreq(freqHz));
+      break;
+    
+    case 2:
+      touch3=true;
+      wave3.freq(midiToFreq(freqHz));
+      break;
+    
+    default:
+      break;
+  }
 }
 
-function touchEnded(){
-  // wave.amp(0, 0.1);
-  wave.stop();
+function endSound(){
+  
 }
+
+
 
 function toggle(){
   if(!playing){        
