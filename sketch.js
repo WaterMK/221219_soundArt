@@ -3,9 +3,13 @@
 
 let sb=[];
 let sbCount=0;
+let vb;
 
 var note=[60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 0];
 var noteIndex;
+var freqHz;
+var ampValue=0.5;
+
 var touch1=false;
 
 var playing=false;
@@ -16,12 +20,11 @@ function setup(){
   
   for(var j=0;j<5;j++){
     for (var k=0;k<3;k++){
-      if(sbCount<13){
-        sb[sbCount]=new soundButton(width/3*k, (height/2)+j*(height/2)/6, width/3, (height/2)/6); //버튼 객체 만들기
-      sbCount++;
-      }
+      sb[sbCount]=new soundButton(width/3*k, (height/2)+j*(height/2)/6, width/3, (height/2)/6); //버튼 객체 만들기
+      sbCount++;    
     }
   }
+  
 }
 
 function draw(){
@@ -43,17 +46,31 @@ function draw(){
 function touchStarted(){
   // wave.freq(midiToFreq(note[noteIndex]))
   wave.start();
-  wave.amp(0.5, 1);
+  wave.amp(ampValue, 1);
 }
 
 
 function test(x, y){
   for (var m=0;m<sb.length;m++){
     if(x>=sb[m].x1 && x<sb[m].x2 && y>=sb[m].y1 && y<sb[m].y2){
-      noteIndex=m;
+      if(m<13) noteIndex=m;
+      
+      else if (m==13) { //볼륨 키우기
+        if(ampValue<=1){
+          ampValue+=0.1;
+        }
+      }
+      else if (m==14){ //볼륨 줄이기
+        if(ampValue>=0){
+          ampValue-=0.1;
+        }
+      }
     }
   }
-  wave.freq(midiToFreq(note[noteIndex]))
+  vb=map(rotationZ, -30, 30, -0.9, 0.9);
+  freqHz=note[noteIndex]+vb;
+  
+  wave.freq(midiToFreq(freqHz));
 }
 
 function touchEnded(){
