@@ -1,13 +1,22 @@
-//wave 3개 만들기
+//왜 하나 누르면 안 나고 세개 눌렀을 때 두개나는지 갯수 차이 확인
 //버튼 누르고 있는지 아닌지 플래그 만들기
 
 let sb=[];
 let sbCount=0;
 let vb;
 
+let tvs=[];
+
 var note=[60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 0];
-var noteIndex;
-var freqHz;
+
+var noteIndex1;
+var noteIndex2;
+var noteIndex3;
+
+var freqHz1;
+var freqHz2;
+var freqHz3;
+
 var ampValue=0.5;
 
 var touch1=false;
@@ -33,6 +42,10 @@ function setup(){
     }
   }
   
+  for(var i=0;i<3;i++){
+    tvs[i]=new touchVector();
+  }
+  
 }
 
 function draw(){
@@ -45,70 +58,77 @@ function draw(){
   }
 
   for(var n=0;n<touches.length;n++){
-    ellipse(50, 50, 100, 100);
-    startSound(n, touches[n].x, touches[n].y);
-    endSound();
+    makeSound(n, touches[n].x, touches[n].y);
   }
 }
 
 
-function touchStarted(){
-  touch1=true;
-  // wave.freq(midiToFreq(note[noteIndex]))
-  for(var n=0;n<touches.length;n++){
-    switch(n){
-      case 0:
-        wave1.start();
-        wave1.amp(ampValue, 1);
-        break;
-      
-      case 1:
-        wave2.start();
-        wave2.amp(ampValue, 1);
-        break;
-        
-      case 2:
-        wave3.start();
-        wave3.amp(ampValue, 1);
-        break;
-    }
-  }
+function touchStarted(){  
+//   vb=map(rotationZ, -30, 30, -0.9, 0.9);
+  if(touch1) wave1.start();
+  if(touch2) wave2.start();
+  if(touch3) wave3.start();
 }
 
 function touchEnded(){
   touch1=false;
-  if (!touch1)
-  for(var n=0;n<touches.length;n++){
-    switch(touch){
-      case 0:
-        wave1.stop();
-        break;
+  switch(touches.length){
+    case 0:
+      touch1=false;
+      touch2=false;
+      touch3=false;
       
-      case 1:
-        wave2.stop();
-        break;
-        
-      case 2:
-        wave3.stop();
-        break;
+      wave1.stop();
+      wave2.stop();
+      wave3.stop();
+      break;
       
-      default:
-        wave1.stop();
-        wave2.stop();
-        wave3.stop();
-        break;
-    }
-  }
+    case 1:
+      touch2=false;
+      touch3=false;
+      
+      wave2.stop();
+      wave3.stop();
+      break;
+      
+    case 2:
+      touch3=false;
+      
+      wave3.stop();
+      break;      
+
+    default:
+      break;
+  } 
 }
 
-
-function startSound(n, x, y){      
-  for (var m=0;m<sb.length;m++){
-    if(x>=sb[m].x1 && x<sb[m].x2 && y>=sb[m].y1 && y<sb[m].y2){
-      if(m<13) {
-        noteIndex=m;
+function makeSound(n, x, y){
+  for(var m=0;m<sb.length;m++){
+    if(x>sb[m].x1 && x<sb[m].x2 && y>=sb[m].y1 && y<sb[m].y2){
+      if(m<13){
+        switch(n){
+          case 0:
+            noteIndex1=m;
+            freqHz1=note[noteIndex1];
+            touch1=true;
+            wave1.freq(midiToFreq(freqHz1));
+            break;
+            
+          case 1:
+            noteIndex2=m;
+            freqHz2=note[noteIndex2];
+            touch2=true;
+            wave2.freq(midiToFreq(freqHz2));
+            break;
+            
+          case 2:
+            noteIndex3=m;
+            freqHz3=note[noteIndex3];
+            touch3=true;
+            wave3.freq(midiToFreq(freqHz3));
+            break;
+        }
       }
-      
       else if (m==13) { //볼륨 키우기
         if(ampValue<=1){
           ampValue+=0.1;
@@ -118,36 +138,75 @@ function startSound(n, x, y){
         if(ampValue>=0){
           ampValue-=0.1;
         }
-      }
+      } 
     }
-  }
-  vb=map(rotationZ, -30, 30, -0.9, 0.9);
-  freqHz=note[noteIndex]+vb;
-  
-  switch(n){
-    case 0:
-      touch1=true;
-      wave1.freq(midiToFreq(freqHz));
-      break;
-    
-    case 1:
-      touch2=true;
-      wave2.freq(midiToFreq(freqHz));
-      break;
-    
-    case 2:
-      touch3=true;
-      wave3.freq(midiToFreq(freqHz));
-      break;
-    
-    default:
-      break;
   }
 }
 
-function endSound(){
+
+// function startSound(n, x, y){
+//   for (var m=0;m<sb.length;m++){
+//     if(x>=sb[m].x1 && x<sb[m].x2 && y>=sb[m].y1 && y<sb[m].y2){
+//       if(m<13) {
+//         switch(n){
+//           case 0:
+//             noteIndex1=m;
+//             break;
+          
+//           case 1:
+//             noteIndex2=m;
+//             break;
+            
+//           case 2:
+//             noteIndex3=m;
+//             break;
+          
+//           default:
+//             break;
+//         }
+//       }
+      
+//       else if (m==13) { //볼륨 키우기
+//         if(ampValue<=1){
+//           ampValue+=0.1;
+//         }
+//       }
+//       else if (m==14){ //볼륨 줄이기
+//         if(ampValue>=0){
+//           ampValue-=0.1;
+//         }
+//       }
+//     }
+//   }
   
-}
+//   vb=map(rotationZ, -30, 30, -0.9, 0.9);  
+  
+// //   if(touch1 && !touch2 && !touch3){
+// //     ellipse(50, 50, 100, 100);
+    
+// //   }
+// //   else if(touch1 && touch2 && !touch3){
+       
+// //   }
+// //   else if(touch1 && touch2 && touch3){
+    
+// //   }
+// }
+
+// function endSound(){
+//   if(!touch1 && !touch2 && !touch3){
+//     wave1.stop();
+//     wave2.stop();
+//     wave3.stop();
+//   }
+//   else if(touch1 && !touch2 && !touch3){
+//     wave2.stop();
+//     wave3.stop();
+//   }
+//   else if(touch1 && touch2 && !touch3){
+//     wave3.stop();
+//   }
+// }
 
 
 
@@ -181,5 +240,17 @@ class soundButton {
     fill(this.defaultColor);
     rect(this.x1, this.y1, this.w, this.h);
     //print(this.x1, 300, 300);
+  }
+}
+
+class touchVector{
+  constructor(){
+    this.x;
+    this.y;
+  }
+  
+  update(x, y){
+    this.x=x;
+    this.y=y;   
   }
 }
