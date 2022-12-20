@@ -1,6 +1,3 @@
-//왜 하나 누르면 안 나고 세개 눌렀을 때 두개나는지 갯수 차이 확인
-//버튼 누르고 있는지 아닌지 플래그 만들기
-
 let sb=[];
 let sbCount=0;
 let vb;
@@ -13,13 +10,9 @@ var freqHzes=[0, 0, 0];
 
 var ampValue=0.5;
 
-var touch1=false;
-var touch2=false;
-var touch3=false;
-
 var playing=false;
 function setup(){
-  createCanvas(displayWidth, displayHeight);
+  createCanvas(windowWidth, windowHeight);
   
   for (var i=0;i<3;i++){
     waves[i]=new p5.Oscillator();
@@ -28,7 +21,7 @@ function setup(){
   
   for(var j=0;j<5;j++){
     for (var k=0;k<3;k++){
-      sb[sbCount]=new soundButton(width/3*k, (height/2)+j*(height/2)/6, width/3, (height/2)/6); //버튼 객체 만들기
+      sb[sbCount]=new soundButton(width/3*k, (height/2)+j*(height/2/5), width/3, height/2/5); //버튼 객체 만들기
       sbCount++;    
     }
   }  
@@ -50,7 +43,6 @@ function draw(){
 
 
 function touchStarted(){  
-//   vb=map(rotationZ, -30, 30, -0.9, 0.9);
   switch(touches.length){
       case 3:
         waves[0].start();
@@ -101,26 +93,30 @@ function touchEnded(){
 }
 
 function makeSound(n, x, y){
+  vb=map(rotationX, -30, 30, -0.5, 0.5);
   for(var m=0;m<sb.length;m++){
     if(x>sb[m].x1 && x<sb[m].x2 && y>=sb[m].y1 && y<sb[m].y2){
       if(m<13){
         switch(n){
           case 0:
             noteIndexes[0]=m;
-            freqHzes[0]=note[noteIndexes[0]];
+            freqHzes[0]=note[noteIndexes[0]]+vb;
             waves[0].freq(midiToFreq(freqHzes[0]));
+            waves[0].amp(ampValue, 1);
             break;
             
           case 1:
             noteIndexes[1]=m;
-            freqHzes[1]=note[noteIndexes[1]];
-            waves[0].freq(midiToFreq(freqHzes[1]));
+            freqHzes[1]=note[noteIndexes[1]]+vb;
+            waves[1].freq(midiToFreq(freqHzes[1]));
+            waves[1].amp(ampValue, 1);
             break;
             
           case 2:
             noteIndexes[2]=m;
-            freqHzes[2]=note[noteIndexes[2]];
+            freqHzes[2]=note[noteIndexes[2]]+vb;
             waves[2].freq(midiToFreq(freqHzes[2]));
+            waves[2].amp(ampValue, 1);
             break;
         }
       }
@@ -158,7 +154,5 @@ class soundButton {
     if(!wb) this.defaultColor=color(0);
     fill(this.defaultColor);
     rect(this.x1, this.y1, this.w, this.h);
-    //print(this.x1, 300, 300);
   }
 }
-
