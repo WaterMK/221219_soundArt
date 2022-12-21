@@ -2,18 +2,19 @@ let sb=[];
 let sbCount=0;
 let vb;
 
+var w=window.innerWidth;
+var h=window.innerHeight;
+
 var note=[60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 0];
 var hueC=[0, 15, 30, 45, 60, 120, 170, 225, 250, 270, 295, 300, 345];
 
 var waves=[];
 var noteIndexes=[0, 0, 0];
 var freqHzes=[0, 0, 0];
-
 var ampValue=0.5;
 
-var playing=false;
 function setup(){
-  createCanvas(windowWidth, windowHeight);
+  createCanvas(w, h);
   
   for (var i=0;i<3;i++){
     waves[i]=new p5.Oscillator();
@@ -22,7 +23,7 @@ function setup(){
   
   for(var j=0;j<5;j++){
     for (var k=0;k<3;k++){
-      sb[sbCount]=new soundButton(width/3*k, (height/2)+j*(height/2/5), width/3, height/2/5); //버튼 객체 만들기
+      sb[sbCount]=new soundButton(w/3*k, (h/2)+j*(h/2/5), w/3, h/2/5); //버튼 객체 만들기
       sbCount++;    
     }
   }  
@@ -34,8 +35,10 @@ function draw(){
   background(255);
   
   for (var i=0;i<sb.length;i++){
-    if (i==1 || i==3 || i==6 || i==8 || i==10) sb[i].show(false);
-    else sb[i].show(true);
+    if (i==1 || i==3 || i==6 || i==8 || i==10) sb[i].show(0);
+    else if(i==13) sb[i].show(2);
+    else if(i==14) sb[i].show(3);
+    else sb[i].show(1);
   }
 
   for(var n=0;n<touches.length;n++){
@@ -44,7 +47,7 @@ function draw(){
 }
 
 
-function touchStarted(){  
+function touchStarted(){
   switch(touches.length){
       case 3:
         waves[0].start();
@@ -69,7 +72,7 @@ function touchStarted(){
     }
 }
 
-function touchEnded(){  
+function touchEnded(){
   switch(touches.length){
     case 3:
       break;
@@ -137,7 +140,7 @@ function makeSound(n, x, y){
         if(ampValue>=0){
           ampValue-=0.1;
         }
-      }      
+      }     
     }
   }
 }
@@ -147,23 +150,23 @@ function makeGraphic(n, m, wb){
     case 0:
       noStroke();
       fill(hueC[m], 100, 100);
-      rectMode(CENTER);
-      rect(width/2, width/2, width*0.8, width*0.8);
+      // rectMode(CENTER);
+      rect(0, 0, w, w*0.8);
       break;
     
     case 1:
       noStroke();
       if(wb) fill(0, 0, 0);
       else if(!wb) fill(0, 0, 100);
-      star(width/2, width/2, width*0.4, width*0.25, 8);
+      star(w/2, w*0.8/2, w*0.4, w*0.25, 8);
       
       fill(hueC[m], 100, 100);
       push();
-      translate(width/2, width/2);
+      translate(w/2, w*0.8/2);
       for(var i=0;i<8;i++){
         rotate(radians(45));
         rectMode(CENTER);
-        rect(0, 0, width*0.2, width*0.8);
+        rect(0, 0, w*0.2, w*0.8);
       }
       pop();
       break;
@@ -173,15 +176,15 @@ function makeGraphic(n, m, wb){
       if(wb) fill(0, 0, 0);
       else if (!wb) fill(0, 0, 100);
       push();
-      translate(width/2, width/2);
+      translate(w/2, w*0.8/2);
       for(var j=0;j<8;j++){
         rotate(radians(45));
-        ellipse(0, 0, width/8, width/3);
+        ellipse(0, 0, w/8, w/3);
       }
       pop();
       
       fill(hueC[m], 100, 100);      
-      star(width/2, width/2, width*0.2, width*0.1, 8);
+      star(w/2, w*0.8/2, w*0.2, w*0.1, 8);
       break;      
   }  
 }
@@ -220,9 +223,13 @@ class soundButton {
   
   show(wb){
     this.wb=wb;
-    if(!wb) this.defaultColor=color(0);
+    if(this.wb==0) this.defaultColor=color(0);
+    else if(this.wb==1) this.defaultColor=color(250);
+    else if(this.wb==2) this.defaultColor=color(0, 50, 100);
+    else if(this.wb==3) this.defaultColor=color(180, 50, 100);
+
     fill(this.defaultColor);
     rect(this.x1, this.y1, this.w, this.h);
-  }
+  }  
 }
 
